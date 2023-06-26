@@ -93,42 +93,42 @@ def data_transformer(data:DataFrame, targets:dict, crs_proj:dict, sub_category_c
     gdf = gdf.to_crs(loc_proj)
     return gdf
 
-def main() -> None:
-    # Path
-    BASE_PATH    = pathlib.Path(__file__).parent.resolve()
-    DATA_PATH   = BASE_PATH.joinpath("data").resolve()
-    MODELS_PATH = BASE_PATH.joinpath("models").resolve()
+# Path
+BASE_PATH    = pathlib.Path(__file__).parent.resolve()
+DATA_PATH   = BASE_PATH.joinpath("data").resolve()
+MODELS_PATH = BASE_PATH.joinpath("models").resolve()
 
+
+# Data et Params
+CITY = 'amiens'
+inData = InData(DATA_PATH, MODELS_PATH, CITY, Params.TARGETS, Params.CATEGORICAL_FEATURES, Params.VARIABLES, Params.CRS_PROJECTION, Params.DBSCAN_PARAMS)
+data = inData.get_data() 
+targets = inData.get_targets() 
+categorical_features = inData.get_categorical_features() 
+variables = inData.get_variables() 
+crs_projection = inData.get_crs_projection() 
+classifiers = inData.get_classifiers() 
+dbscan_params = inData.get_dbscan_params() 
+update_on     = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+gdf = data_transformer(data, targets, crs_projection, CrimeSchema.SUB_CATEGORY, CrimeSchema.LATITUDE, CrimeSchema.LONGITUDE)
     
-    # Data et Params
-    CITY = 'amiens'
-    inData = InData(DATA_PATH, MODELS_PATH, CITY, Params.TARGETS, Params.CATEGORICAL_FEATURES, Params.VARIABLES, Params.CRS_PROJECTION, Params.DBSCAN_PARAMS)
-    data = inData.get_data() 
-    targets = inData.get_targets() 
-    categorical_features = inData.get_categorical_features() 
-    variables = inData.get_variables() 
-    crs_projection = inData.get_crs_projection() 
-    classifiers = inData.get_classifiers() 
-    dbscan_params = inData.get_dbscan_params() 
-    update_on     = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-    gdf = data_transformer(data, targets, crs_projection, CrimeSchema.SUB_CATEGORY, CrimeSchema.LATITUDE, CrimeSchema.LONGITUDE)
-       
-    # APP CONTAINT
-    app = Dash(
-        __name__, 
-        external_stylesheets = [dbc.themes.BOOTSTRAP, dbc.icons.FONT_AWESOME],
-        meta_tags=[{'name': 'viewport',
-                        'content': 'width=device-width, initial-scale=1.0'}]
-    )
-    server = app.server
-    app.config.suppress_callback_exceptions = True
-    app.title = "Anticipation des risques"
-    app.layout = create_layout(
-        app, 
-        gdf, targets, categorical_features, variables, crs_projection, classifiers, dbscan_params,
-        DATA_PATH, update_on
-    )
-    app.run_server(debug=True)
+# APP CONTAINT
+app = Dash(
+    __name__, 
+    external_stylesheets = [dbc.themes.BOOTSTRAP, dbc.icons.FONT_AWESOME],
+    meta_tags=[{'name': 'viewport',
+                    'content': 'width=device-width, initial-scale=1.0'}]
+)
+
+server = app.server
+
+app.config.suppress_callback_exceptions = True
+app.title = "Anticipation des risques"
+app.layout = create_layout(
+    app, 
+    gdf, targets, categorical_features, variables, crs_projection, classifiers, dbscan_params,
+    DATA_PATH, update_on
+)
 
 if __name__ == '__main__':
-   main()
+    app.run_server(debug=True, port=8053)
