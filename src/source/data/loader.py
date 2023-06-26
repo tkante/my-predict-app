@@ -1,7 +1,7 @@
 from pandas import DataFrame, read_csv
 
 class Files:
-    CRIME = 'database.csv'
+    CRIME = 'database.zip'
     FPS   = 'fps.csv'
     CONTROLS = 'controls.csv'
 
@@ -36,6 +36,7 @@ def load_crime_data(path:str, sub_dir:str) -> DataFrame:
     """load the data from the CSV file"""
     data = read_csv(
         filename,
+        compression='zip',
         dtype={
             CrimeSchema.LATITUDE:float,
             CrimeSchema.LONGITUDE:float,

@@ -128,7 +128,7 @@ def main() -> None:
         gdf, targets, categorical_features, variables, crs_projection, classifiers, dbscan_params,
         DATA_PATH, update_on
     )
-    app.run_server(debug=False, port=8053)
+    app.run_server(debug=True)
 
 if __name__ == '__main__':
    main()
