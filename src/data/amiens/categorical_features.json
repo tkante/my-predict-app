@@ -1,0 +1,3 @@
+{
+    "categorical_features": ["monthname", "dayofweek", "holiday_name"]
+}

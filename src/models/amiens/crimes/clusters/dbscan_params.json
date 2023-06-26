@@ -1,0 +1,9 @@
+{
+    "Agressions physiques": {"distance": 250, "min_samples":1},
+    "Atteintes sexuelles": {"distance": 250, "min_samples":5},
+    "Cambriolages": {"distance": 100, "min_samples":5},
+    "Vols": {"distance": 60, "min_samples":5},
+    "Depots sauvages": {"distance": 60, "min_samples":10},
+    "Nuisances sonores": {"distance": 40, "min_samples":20}
+
+}

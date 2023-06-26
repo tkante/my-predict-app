@@ -1,0 +1,14 @@
+parkingareaid,parkingarealabel,parkingareacapacity,maxtime,__source_connector,clientName,__deleted
+11,Orange centre-ville,,120,postgresql,amiens,false
+12,Verte centre-ville,,300,postgresql,amiens,false
+13,Violette Saint-Leu,,300,postgresql,amiens,false
+14,Violette Saint-Germain,,300,postgresql,amiens,false
+15,Violette La Vallée,,300,postgresql,amiens,false
+16,Violette Riolan,,300,postgresql,amiens,false
+17,Violette Noyon,,300,postgresql,amiens,false
+18,Violette Sainte-Anne,,300,postgresql,amiens,false
+19,Violette Saint-Maurice,,300,postgresql,amiens,false
+20,Violette Cange,,300,postgresql,amiens,false
+21,Violette Saint-Pierre,,300,postgresql,amiens,false
+22,Violette Henriville,,300,postgresql,amiens,false
+55,Violette Hortillonnages,,300,postgresql,amiens,false
