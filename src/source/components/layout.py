@@ -12,7 +12,7 @@ from source.components import(
 
 def create_layout(
         app:Dash, 
-        gdf:GeoDataFrame, targets:List[str], categorical_features:dict, variables:list, crs_projection:dict, classifiers:dict, dbscan_params:dict,
+        gdf:GeoDataFrame, windows_tranlate:dict, targets:List[str], categorical_features:dict, variables:list, crs_projection:dict, classifiers:dict, dbscan_params:dict,
         path:str, update_on) -> html.Div:
     categories = list(targets.keys())
     return html.Div(
@@ -37,10 +37,10 @@ def create_layout(
             dbc.Row(
                 [
                     dbc.Col(
-                        children=[controls.render(app, gdf, categories)],
+                        children=[controls.render(app, gdf,  windows_tranlate, categories)],
                         xs=12, sm=12, md=4, lg=4, xl=4
                     ),
-                    dbc.Col(children=[maps.render(app, gdf, targets, categorical_features, variables, crs_projection, classifiers, dbscan_params, path, update_on)],
+                    dbc.Col(children=[maps.render(app, gdf, windows_tranlate, targets, categorical_features, variables, crs_projection, classifiers, dbscan_params, path, update_on)],
                         xs=12, sm=12, md=8, lg=8, xl=8
                     )
                 ]

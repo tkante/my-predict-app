@@ -27,25 +27,30 @@ def heat_map(df:DataFrame, category_col:str, lat:str, lng:str, categories:List[s
 
 def feature_tooltips(probs, occurrences, target, update_on):
     # cmap = mpl.cm.YlOrRd
-    cmap = mpl.cm.RdBu_r
     try:
-        color = mpl.colors.to_hex(cmap(probs))
+        if probs <=0.3:
+            cmap = mpl.cm.RdBu_r
+            occurrences = 0
+            probs = 0.1
+        else:
+            cmap = mpl.cm.YlOrRd
     except:
         occurrences = 0
-        probs = 0.09
-        color = mpl.colors.to_hex(cmap(probs))
+        probs = 0.1
+    
+    color = mpl.colors.to_hex(cmap(probs))
 
     if probs <= 0.33:
-        risk = 'Low Risk'
+        risk = 'Risque Faible'
     elif 0.33 < probs <= 0.55:
-        risk = 'Significant Risk'
+        risk = 'Risque Singificatif'
     else:
-        risk='High Risk' 
+        risk='Risque élevé' 
         
     html_ = f"""<div class="card col " style="border-radius:6px;border-top: 6px solid {color};">
                     <div class="card-body">
                          <div style='display:flex;justify-content:space-between'">
-                             <h6 class="card-title mb-4" style="font-size: 14px;">Risk Level:</h6>
+                             <h6 class="card-title mb-4" style="font-size: 14px;">Niveau de risque:</h6>
                              <h6 class="card-title mb-1" style="font-size: 14px;color: {color}">{risk}<br></h6>
                          </div>
                     </div>
@@ -53,7 +58,7 @@ def feature_tooltips(probs, occurrences, target, update_on):
                          <table class="table align-middle table-nowrap mb-0">
                              <thead>
                                  <tr>
-                                     <th scope="col" >TARGET</th>
+                                     <th scope="col" >Evénement redouté</th>
                                      <th scope="col">Prob (%)</th>
                                      <th scope="col">INCIDENTS</th>
                                  </tr>
@@ -62,7 +67,7 @@ def feature_tooltips(probs, occurrences, target, update_on):
                                  <tr>
 
                                      <td>{target}</td>
-                                     <td>{np.round(probs, 4)}</td>
+                                     <td>{np.round(probs, 4)*100}</td>
                                      <td >{int(occurrences)}</td>
 
                                  </tr>
@@ -70,10 +75,10 @@ def feature_tooltips(probs, occurrences, target, update_on):
                          </table>
                      </div>
                      <p class="mb-0" style="font-size: 11px;">
-                             FORECAST ACCURACY +-10%
+                            PRÉCISION DE LA PRÉVISION +-10%
                      </p>
                      <p class="mb-0" style="font-size: 9px;">
-                             updated on {str(update_on)}
+                            mis à jour le {str(update_on)}
                      </p>
                  </div>
              </div>          
@@ -168,7 +173,11 @@ def baseGridRiskMap(df:DataFrame, category_col:str, sub_category_col:str, lat_co
 
 def set_cluster_feature(data, value, occurrence, target, update_on):
     d_json = json.loads(data.to_json())
-    cmap = mpl.cm.RdBu_r
+    if value <= 0.30:
+        cmap = mpl.cm.RdBu_r
+        value = 0.1
+    else:
+        cmap = mpl.cm.YlOrRd
     for feature in d_json["features"]:
         feature['properties'] = {
             "weight":2,
@@ -205,3 +214,13 @@ def save_map(m, path, folder:str, filename:str) -> None:
     LayerControl().add_to(m)
     m.save(path.joinpath(f"{folder}/{filename}"))
     return
+
+def coordsInterpolate(gdf, step=0.002):
+    x = gdf.copy()
+    x['lat_interpolate'] = np.floor(x['LATITUDE'] / step) * step
+    x['lon_interpolate'] = np.floor(x['LONGITUDE'] / step) * step
+    x = x.groupby(['lat_interpolate', 'lon_interpolate'])['Value'].mean()
+    x /= x.max()
+    x = x.reset_index()
+    print(x.shape)
+    return x

@@ -1,5 +1,6 @@
 from dash import Dash, html, dcc, Input, Output
 import dash_bootstrap_components as dbc
+import dash_leaflet as dl 
 
 import json
 import datetime
@@ -49,18 +50,27 @@ def display_selected_items(days, catgeories) -> html.Ul:
             display_selected_categories(catgeories)
         ])
 
-
-
 def build_cluster_for_target(gdf:GeoDataFrame, target, dbscan_params:dict, cluster_col, district_col, district) -> dict:
     geo_j, df_target = GeoDataFrame(), GeoDataFrame()
     if target is not None:
-        gdf = gdf[gdf[target] == 1].copy()
+        sub_data = gdf[gdf[target] == 1].copy()
         params = dbscan_params.get(target)
         distance, min_samp = params.get('distance'), params.get('min_samples')
-        geo_j, df_target = dbscan_hotspots(gdf, distance, min_samp, [target], cluster_col, district_col, district)
+        geo_j, df_target = dbscan_hotspots(sub_data, distance, min_samp, [target], cluster_col, district_col, district)
     return geo_j, df_target
 
-def create_map(gdf:GeoDataFrame, path:str, folder:str, filename:str,
+# def build_cluster_for_selection(gdf:GeoDataFrame, target, dbscan_params:dict, cluster_col, district_col, district) -> dict:
+#     geo_j, df_target = GeoDataFrame(), GeoDataFrame()
+#     if target is not None:
+#         sub_data = sub_data[(gdf[target] == 1) & (sub_data[district_col].isin(district))].copy()
+#         if 0 < gdf.shape[0] <=:
+#             geo_j = build_geojson_grid(sub_data)
+#         params = dbscan_params.get(target)
+#         distance, min_samp = params.get('distance'), params.get('min_samples')
+#         geo_j, df_target = dbscan_hotspots(gdf, distance, min_samp, [target], cluster_col, district_col, district)
+#     return geo_j, df_target
+
+def create_map(gdf:GeoDataFrame, path:str, folder:str, filename:str, windows_tranlate:dict,
                categories,  districts, dayofweeks, windows, support,
                targets, categorical_features, variables, crs_projection, classifiers, dbscan_params, update_on) -> None:
     m = Map(location=[gdf[CrimeSchema.LATITUDE].median(), gdf[CrimeSchema.LONGITUDE].median()], zoom_control=14) 
@@ -76,6 +86,7 @@ def create_map(gdf:GeoDataFrame, path:str, folder:str, filename:str,
     if isinstance(windows, str):
         windows = [windows]
     
+    windows = [windows_tranlate.get(window) for window in windows]
     dayofweeks = [to_datetime(day).day_name() for day in dayofweeks]
     month = to_datetime(update_on).month_name()
 
@@ -85,9 +96,9 @@ def create_map(gdf:GeoDataFrame, path:str, folder:str, filename:str,
                                                     CrimeSchema.CLUSTER, CrimeSchema.DISTRICT, districts) 
         X = feeaturesX(gdf, CrimeSchema.DATE, CrimeSchema.MONTH_NAME, CrimeSchema.DAYOFWEEK, CrimeSchema.WINDOW,  month, dayofweeks,  windows, CrimeSchema.HOLIDAY_NAME, category, categorical_features, variables)
         proba = predict_proba(X, model)
-        geo_j[CrimeSchema.PROBABILITY] = geo_j[category]*proba
-        geo_j[CrimeSchema.PROBABILITY] = geo_j[category]/geo_j[category].max()
         geo_j[CrimeSchema.OCCURENCES] =  [random.randrange(4) for _ in range(geo_j.shape[0])]
+        geo_j[CrimeSchema.PROBABILITY] = geo_j[CrimeSchema.OCCURENCES]*proba
+        geo_j[CrimeSchema.PROBABILITY] = geo_j[CrimeSchema.OCCURENCES]/geo_j[CrimeSchema.OCCURENCES].max()
         m = hotspots_map(m, geo_j, category, CrimeSchema.CLUSTER, CrimeSchema.PROBABILITY, CrimeSchema.OCCURENCES, update_on)
     save_map(m, path, folder, filename)
 
@@ -99,11 +110,11 @@ def render_map(path:str, folder:str, filename) -> html.Div:
         ]
     )
 
-
 def render(
         app:Dash, 
-        gdf:GeoDataFrame, targets:List[str], categorical_features:dict, variables:list, crs_projection:dict, classifiers:dict, dbscan_params:dict,
+        gdf:GeoDataFrame, windows_tranlate:dict, targets:List[str], categorical_features:dict, variables:list, crs_projection:dict, classifiers:dict, dbscan_params:dict,
         path:str, update_on) -> html.Div:
+    windows_tranlate = {v:k for k,v in windows_tranlate.items()}
     @app.callback(
         Output(ids.HOTSPOTS_MAP, 'children'),
             [
@@ -117,12 +128,10 @@ def render(
     def map_hp(categories, districts, dayofweeks, windows, support):
         
         create_map(
-            gdf, path, FOLDER, MAP_FILENAME,
+            gdf, path, FOLDER, MAP_FILENAME, windows_tranlate,
             categories,  districts, dayofweeks, windows, support,
             targets, categorical_features, variables, crs_projection, classifiers, dbscan_params, update_on
         )
-        
-
         return html.Div(
             children=[
                 render_map(path, FOLDER, MAP_FILENAME),
@@ -131,7 +140,6 @@ def render(
             ], 
             id= ids.HOTSPOTS_MAP
         )
-    
     return html.Div("Pas de predictions!", id=ids.HOTSPOTS_MAP)
 
 

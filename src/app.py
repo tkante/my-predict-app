@@ -93,6 +93,13 @@ def data_transformer(data:DataFrame, targets:dict, crs_proj:dict, sub_category_c
     gdf = gdf.to_crs(loc_proj)
     return gdf
 
+
+
+# windows
+WINDOWS_TRANSLATE = {
+    "morning": "matin", "afternoon": "après-midi", "night": "nuit", "evening": "soir"
+}
+
 # Path
 BASE_PATH    = pathlib.Path(__file__).parent.resolve()
 DATA_PATH   = BASE_PATH.joinpath("data").resolve()
@@ -126,7 +133,7 @@ app.config.suppress_callback_exceptions = True
 app.title = "Anticipation des risques"
 app.layout = create_layout(
     app, 
-    gdf, targets, categorical_features, variables, crs_projection, classifiers, dbscan_params,
+    gdf, WINDOWS_TRANSLATE, targets, categorical_features, variables, crs_projection, classifiers, dbscan_params,
     DATA_PATH, update_on
 )
 

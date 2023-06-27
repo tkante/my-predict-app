@@ -45,4 +45,6 @@ def load_crime_data(path:str, sub_dir:str) -> DataFrame:
         parse_dates=[CrimeSchema.DATE],
         encoding='utf-8'
     )
+    # print("DATBASE:")
+    # print(data.head())
     return data

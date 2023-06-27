@@ -23,7 +23,7 @@ def select_current_window(windows):
         return window
     return windows
 
-def render(data:DataFrame) -> html.Div :
+def render(data:DataFrame,  windows_tranlate:dict) -> html.Div :
     df = data.copy(deep=True)
     df.dropna(subset=[CrimeSchema.WINDOW], inplace=True)
     windows = df[CrimeSchema.WINDOW].unique().tolist()
@@ -32,8 +32,8 @@ def render(data:DataFrame) -> html.Div :
             html.Label("Plage horaire", className='p-1'),
             dcc.Dropdown(
                 id= ids.WINDOW_DROPDOWN,
-                options= [{'label': window, 'value':window} for window in windows],
-                value= select_current_window(windows),
+                options= [{'label': windows_tranlate.get(window), 'value': windows_tranlate.get(window)} for window in windows],
+                value= windows_tranlate.get(select_current_window(windows)),
                 multi= True,
             )
         ]

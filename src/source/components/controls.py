@@ -14,7 +14,7 @@ from . import (
     category_dropdown
 )
 
-def render(app:Dash, data:DataFrame, categories:List[str]) -> dbc.Card:
+def render(app:Dash, data:DataFrame,  windows_tranlate:dict, categories:List[str]) -> dbc.Card:
     return  dbc.Card(
         [
             html.Div([upload_data.render(),]),
@@ -22,7 +22,7 @@ def render(app:Dash, data:DataFrame, categories:List[str]) -> dbc.Card:
             html.Div([category_dropdown.render(categories)]),
             html.Div([district_dropdown.render(data)]),
             html.Div([dayofweek_dropdown.render()]),
-            html.Div([window_dropdown.render(data)]),
+            html.Div([window_dropdown.render(data,  windows_tranlate)]),
             html.Div([risk_level.render()]),
         ],
         body=True,
