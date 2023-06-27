@@ -4,6 +4,10 @@
     "Cambriolages": {"distance": 100, "min_samples":5},
     "Vols": {"distance": 60, "min_samples":5},
     "Depots sauvages": {"distance": 60, "min_samples":10},
-    "Nuisances sonores": {"distance": 40, "min_samples":20}
+    "Nuisances sonores": {"distance": 40, "min_samples":20},
+    "Stationnement anarchique":{"distance": 60, "min_samples":10},
+    "Points de deal":  {"distance": 60, "min_samples":10},
+    "Rodeo urbain": {"distance": 60, "min_samples":10},
+    "Dechets verts": {"distance": 60, "min_samples":10}
 
 }

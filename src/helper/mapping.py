@@ -58,9 +58,9 @@ def feature_tooltips(probs, occurrences, target, update_on):
                          <table class="table align-middle table-nowrap mb-0">
                              <thead>
                                  <tr>
-                                     <th scope="col" >Evénement redouté</th>
+                                     <th scope="col" >Evénement cible</th>
                                      <th scope="col">Prob (%)</th>
-                                     <th scope="col">INCIDENTS</th>
+                                     <th scope="col">Incidents (-7 jours)</th>
                                  </tr>
                              </thead>
                              <tbody>
@@ -68,7 +68,7 @@ def feature_tooltips(probs, occurrences, target, update_on):
 
                                      <td>{target}</td>
                                      <td>{np.round(probs, 4)*100}</td>
-                                     <td >{int(occurrences)}</td>
+                                     <td style="text-align: center">{int(occurrences)}</td>
 
                                  </tr>
                              </tbody>

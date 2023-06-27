@@ -4,5 +4,9 @@
     "Vols": ["Vols", "Vols liés aux véhicules"],
     "Cambriolages": ["Cambriolages"],
     "Atteintes sexuelles": [ "Atteintes sexuelles"],
-    "Agressions physiques": ["Agressions physiques"]
+    "Agressions physiques": ["Agressions physiques"],
+    "Stationnement anarchique": ["Stationnement gênant", "Stationnement abusif"],
+    "Points de deal": ["Stupéfiant et alcool", "Détention illegale armes"],
+    "Rodeo urbain": ["Cours de véhicules", "Gymkhanas", "Excès de vitesse"],
+    "Dechets verts": ["Tags ou graffitis", "Souillures", "Squatt"]
 }
